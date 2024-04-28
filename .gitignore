@@ -1,0 +1,13 @@
+*.retry
+*/__pycache__
+*.pyc
+.cache
+
+# macOS-specific files
+.DS_Store
+
+# intellij
+.idea
+
+# some files for dashnboard are auto-generated
+roles/argocd/files/ingress.yml

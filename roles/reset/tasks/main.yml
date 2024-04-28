@@ -1,0 +1,24 @@
+---
+- name: Check if Argo CD release exists
+  command: helm list -n argocd
+  register: argocd_release_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Uninstall Argo CD if it exists
+  when: argocd_release_check.stdout != "NAME\tNAMESPACE\tREVISION\tUPDATED\tSTATUS\tCHART\tAPP VERSION"
+  command: "helm uninstall argocd -n argocd"
+  register: argocd_uninstall
+  ignore_errors: true
+
+- name: Delete Argo CD CRDs
+  when: argocd_release_check.stdout != "NAME\tNAMESPACE\tREVISION\tUPDATED\tSTATUS\tCHART\tAPP VERSION"
+  shell:
+    cmd: |
+      kubectl delete crd applications.argoproj.io --cascade=false
+      kubectl delete crd applicationsets.argoproj.io --cascade=false
+      kubectl delete crd appprojects.argoproj.io --cascade=false
+
+- name: Delete argocd namespace
+  when: argocd_release_check.stdout != "NAME\tNAMESPACE\tREVISION\tUPDATED\tSTATUS\tCHART\tAPP VERSION"
+  command: "kubectl delete namespace argocd"

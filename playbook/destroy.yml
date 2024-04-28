@@ -1,0 +1,6 @@
+---
+- name: Remove ArgoCD
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: reset
