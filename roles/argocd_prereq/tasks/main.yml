@@ -30,4 +30,3 @@
 - name: Install argocd using Homebrew if not already installed
   command: "brew install argocd"
   when: argocd_is_installed.rc != 0
-
