@@ -80,3 +80,19 @@
   shell: "argocd account update-password --current-password {{ argocd_admin_password }} --new-password {{ argo_cd_password }}"
   register: update_password_output
   ignore_errors: true
+
+- name: Generate repo-secret.yml
+  template:
+    src: "repo-secret.yml.j2"
+    dest: "../roles/argocd/files/repo-secret.yml"
+    mode: "0644"
+
+- name: Check if secret.yaml was applied
+  shell: "kubectl get secrets argocd-private-repo"
+  register: repo_secret_exists
+  ignore_errors: true
+  changed_when: false
+
+- name: Apply repo-secret.yaml if it doesn't exist
+  shell: "kubectl apply -f ../roles/argocd/files/repo-secret.yml"
+  when: repo_secret_exists.rc != 0

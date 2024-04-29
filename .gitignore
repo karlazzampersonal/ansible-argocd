@@ -11,3 +11,4 @@
 
 # some files for dashnboard are auto-generated
 roles/argocd/files/ingress.yml
+roles/argocd/files/repo-secret.yml
