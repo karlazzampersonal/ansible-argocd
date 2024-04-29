@@ -2,7 +2,7 @@
 
 ## Description
 
-- Install ArgoCD
+- Install ArgoCD and its image updater service
 ```bash
 ansible-vault encrypt inventory/group_vars/argocd.yml
 ansible-playbook -i inventory/local.ini playbook/provision.yml --ask-vault-pass

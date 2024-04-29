@@ -1,9 +1,9 @@
 ---
-#- name: Install pre-reqs such as helm
-#  hosts: localhost
-#  gather_facts: false
-#  roles:
-#    - role: argocd_prereq
+- name: Install pre-reqs such as helm
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: argocd_prereq
 
 - name: Install ArgoCD
   hosts: localhost

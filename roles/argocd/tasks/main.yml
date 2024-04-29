@@ -22,7 +22,17 @@
   changed_when: false
 
 - name: Install ArgoCD via Helm if it doesn't exist
-  command: "helm install argocd argo/argo-cd --namespace argocd  --values=../roles/argocd/files/values.yml"
+  command: "helm install argocd argo/argo-cd --namespace argocd  --values=../roles/argocd/files/argocd_values.yml"
+  when: argocd_check.rc != 0
+
+- name: Check if ArgoCD image-updater deployment exists
+  command: "kubectl get deployment argocd-image-updater"
+  register: argocd_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Install ArgoCD image updater via Helm if it doesn't exist
+  command: "helm install argocd-image-updater argo/argocd-image-updater --namespace argocd  --values=../roles/argocd/files/argocd_image_updater_values.yml"
   when: argocd_check.rc != 0
 
 - name: Generate ingress.yml
