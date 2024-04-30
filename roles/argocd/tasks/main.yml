@@ -27,13 +27,13 @@
 
 - name: Check if ArgoCD image-updater deployment exists
   command: "kubectl get deployment argocd-image-updater"
-  register: argocd_check
+  register: argocd_image_updater_check
   ignore_errors: true
   changed_when: false
 
 - name: Install ArgoCD image updater via Helm if it doesn't exist
   command: "helm install argocd-image-updater argo/argocd-image-updater --namespace argocd  --values=../roles/argocd/files/argocd_image_updater_values.yml"
-  when: argocd_check.rc != 0
+  when: argocd_image_updater_check.rc != 0
 
 - name: Generate ingress.yml
   template:
@@ -51,14 +51,15 @@
   shell: "kubectl apply -f ../roles/argocd/files/ingress.yml"
   when: ingress_exists.rc != 0
 
-- name: Check if Traefik middleware exists
-  command: "kubectl get middleware -o jsonpath='{.items}'"
+- name: Check if ArgoCD middleware exists
+  command: "kubectl get middleware default-headers -n argocd "
   register: middleware_check
+  ignore_errors: true
   changed_when: false
 
 - name: Apply default headers configuration if middleware doesn't exist
   shell: "kubectl apply -f ../roles/argocd/files/default-headers.yml"
-  when: middleware_check.stdout.find('[]') != -1
+  when: middleware_check.rc != 0
 
 - name: Fetch Argo CD admin initial password
   shell: "argocd admin initial-password -n argocd | awk '/^[[:alnum:]]+$/ { print $1; exit }'"
@@ -88,7 +89,7 @@
     mode: "0644"
 
 - name: Check if secret.yaml was applied
-  shell: "kubectl get secrets argocd-private-repo"
+  shell: "kubectl get secrets argocd-private-repo -n argocd"
   register: repo_secret_exists
   ignore_errors: true
   changed_when: false

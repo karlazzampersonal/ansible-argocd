@@ -17,6 +17,7 @@ ansible-playbook -i inventory/local.ini playbook/destroy.yml --ask-vault-pass
 ## Requirements
 
 - Python3 and pip installed on your machine
+- Make sure you have your DNS A record created for `argo.local.example.com` pointed to `198.168.1.60`
 
 ## Linting and syntax-check
 
